@@ -3425,7 +3425,7 @@
                 inisiasiKalenderAwal(); updatePlotList(); updateRekap(); updateWalletDropdownBalances(); jalankanJam(); cekNotifikasiJatuhTempo(); showPage(null, 'pemasukan', 0); terapkanVersi(); 
             } catch(e) {}
 
-            // Eksekusi pelepasan sistem pengunci background secara instan
+                     // Eksekusi pelepasan sistem pengunci background secara instan
             setTimeout(() => { 
                 if (typeof isSystemLockedByCriticalPopup !== 'undefined' && isSystemLockedByCriticalPopup) return;
                 document.body.classList.remove('modal-open'); 
@@ -3433,5 +3433,47 @@
         }
     });
 </script>
+
+<script>
+(function() {
+    // 1. Blokir Klik Kanan (Context Menu)
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. Blokir Shortcut Keyboard Developer Tools
+    document.addEventListener('keydown', function(e) {
+        // Blokir F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+        }
+        // Blokir Ctrl + Shift + I / J / C (Windows/Linux Inspect)
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+            e.preventDefault();
+        }
+        // Blokir Ctrl + U (View Source)
+        if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+            e.preventDefault();
+        }
+        // Blokir Cmd + Option + I / J / U (Mac OS)
+        if (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'U' || e.key === 'u')) {
+            e.preventDefault();
+        }
+    });
+
+    // 3. Jebakan Debugger (DevTools Trap)
+    const devToolsTrap = function() {
+        setTimeout(devToolsTrap, 2000);
+        const start = performance.now();
+        debugger; 
+        const end = performance.now();
+        if (end - start > 100) {
+            // Optional trap logic
+        }
+    };
+    devToolsTrap();
+})();
+</script>
 </body>
-</html> 
+</html>
+   
