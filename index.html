@@ -34,10 +34,13 @@
         }
 
         html, body { height: 100%; overscroll-behavior-y: none; overflow-x: hidden; width: 100%; max-width: 100%; }
-        body {
+                body {
             font-family: 'Montserrat', sans-serif; font-weight: 500; margin: 0; 
             background-color: var(--wa-bg); color: var(--text-light);
             display: flex; flex-direction: column; overflow: hidden; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
         body.modal-open { overflow: hidden; pointer-events: none; -webkit-overflow-scrolling: touch; }    
         body.modal-open .modal-overlay { pointer-events: auto; }
@@ -95,13 +98,17 @@
         .glow-shopee { filter: drop-shadow(0 0 6px rgba(255, 87, 34, 0.8)); }
 
         .dropdown-wrapper { position: relative; display: flex; align-items: center;}
-        .dropdown-content {
+               .dropdown-content {
             position: absolute; top: 40px; right: 0; 
             background: rgba(21, 21, 21, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
             min-width: 180px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.9);
             z-index: 10000; overflow: hidden; 
             border: 1px solid var(--border-color); border-top: 1px solid rgba(255,255,255,0.15); border-left: 1px solid rgba(255,255,255,0.05); 
             animation: slideDownGlass 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: top right;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            will-change: transform, opacity;
         }
         @keyframes slideDownGlass { 0% { opacity: 0; transform: scale(0.9) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         
@@ -261,15 +268,18 @@
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 20000; touch-action: none; transition: opacity 0.2s ease; will-change: opacity;}
         
-        .modal-box { 
+              .modal-box { 
             background: #181818; 
             padding: 25px 20px; border-radius: 16px; width: 85%; max-width: 320px; text-align: center; 
             border: 1px solid var(--border-color); border-top: 1px solid rgba(255,255,255,0.1); border-left: 1px solid rgba(255,255,255,0.05); 
             box-shadow: 0 20px 50px rgba(0,0,0,0.9); transition: border-color 0.3s; touch-action: auto; 
             animation: popInBouncy 0.3s ease-out;
             will-change: transform, opacity;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
-        
+
                 #edit-modal .modal-box, #cloud-load-modal .modal-box, #import-modal .modal-box, #extra-form-box, #about-modal .modal-box { max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
         #about-modal .modal-box::-webkit-scrollbar { width: 3px; }
         #about-modal .modal-box::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
@@ -426,6 +436,30 @@
         #extra-form-box input, #extra-form-box .custom-select-trigger { padding: 8px 10px !important; font-size: 12px !important; }
         #extra-form-box .modal-actions { margin-top: 8px !important; }
         #extra-form-box .modal-btn { padding: 10px !important; font-size: 12px !important; margin-top: 0 !important; }
+        /* [INJEKSI QA UI]: Desain Kartu Tutorial Profesional */
+        .tutorial-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--cloud);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @media (hover: hover) { .tutorial-card:hover { transform: translateX(5px); background: rgba(255, 255, 255, 0.08); } }
+        .tutorial-card h4 {
+            margin: 0 0 10px 0;
+            color: var(--cloud);
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tutorial-card p { margin: 0 0 8px 0; font-size: 11.5px; color: #dddddd; line-height: 1.6; }
+        .tutorial-card ul { margin: 0; padding-left: 18px; font-size: 11.5px; color: #dddddd; line-height: 1.6; }
+        .tutorial-card li { margin-bottom: 4px; }
+        .tutorial-card strong { color: #ffffff; }
+        .tutorial-highlight { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700;}
     </style>
 </head>
  <body>
@@ -649,7 +683,7 @@
         </div>
     </div>
 </div>
-<div id="chart-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeChartModal()">
+<div id="chart-modal" class="modal-overlay hidden">
     <div class="modal-box" style="width: 90%; max-width: 360px; padding: 25px 20px;">
         <h3 class="audiowide-regular" style="margin-top:0; margin-bottom: 20px; color:var(--text-light); font-size:16px;">Status Keuangan Saat Ini</h3>
         <div class="charts-grid">
@@ -667,7 +701,7 @@
     </div>
 </div>
 
-<div id="mutation-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeMutationModal()">
+<div id="mutation-modal" class="modal-overlay hidden">
     <div class="modal-box" style="padding: 20px;">
         <h3 class="audiowide-regular" style="margin-top:0; margin-bottom: 15px; color:#ffffff; font-size:16px;">⇄ Mutasi Saldo</h3>
         <div class="form-group" style="text-align:left;"><label for="mut-date">Tanggal</label><input type="text" id="mut-date" readonly onclick="openPicker('mut-date', 'date', '#ffffff'); event.stopPropagation();"></div>
@@ -713,16 +747,19 @@
     </div>
 </div>
 
-<div id="about-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeAboutModal()">
-    <div class="modal-box" style="padding: 25px 20px; width: 90%; max-width: 360px;">
+<div id="about-modal" class="modal-overlay hidden">
+    <!-- [INJEKSI QA UI]: min-height 82vh & space-between untuk proporsi vertikal elegan -->
+    <div class="modal-box" style="padding: 35px 20px 25px 20px; width: 90%; max-width: 360px; min-height: 82vh; max-height: 90vh; overflow: hidden !important; display: flex; flex-direction: column; justify-content: space-between;">
+        
         <button onclick="closeAboutModal()" style="position: absolute; top: 12px; right: 12px; background: none; border: none; cursor: pointer; padding: 5px; z-index: 10;">
             <svg class="svg-x" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10" stroke-width="1.5"></circle>
                 <path d="m15 9-6 6M9 9l6 6" stroke-width="2"></path>
             </svg>
         </button>
-        
-        <div style="text-align: center; margin-bottom: 20px; margin-top: 5px;">
+
+        <!-- GRUP 1: Header & Versi -->
+        <div style="text-align: center; margin-top: 5px;">
             <h2 class="app-title about-title" style="justify-content: center; margin-bottom: 8px;">
                 <span class="title-uang" style="margin-right: 5px;"><span class="letter" style="animation-delay: 0.0s">u</span><span class="letter" style="animation-delay: 0.2s">a</span><span class="letter" style="animation-delay: 0.4s">n</span><span class="letter" style="animation-delay: 0.6s">g</span></span>
                 <span class="title-fam" style="margin-right: 2px;"><span class="letter" style="animation-delay: 0.8s">f</span><span class="letter" style="animation-delay: 1.0s">a</span><span class="letter" style="animation-delay: 1.2s">m</span></span>
@@ -730,61 +767,69 @@
             </h2>
             <span id="app-version-display" style="background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 12px; color: #ffffff; font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">VERSI 1.0 (PUBLIC EDITION)</span>
         </div>
-        
-        <div style="font-size: 12px; line-height: 1.5; color: #ffffff; font-family: 'Montserrat', sans-serif;">
-            
-            <div class="about-glass-card" style="border: 1px solid rgba(255,255,255,0.1); padding: 15px; margin-bottom: 12px; border-radius: 12px;">
+
+        <!-- GRUP 2: Kartu Informasi -->
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="about-glass-card" style="border: 1px solid rgba(255,255,255,0.1); padding: 15px; margin: 0; border-radius: 12px;">
                 <div style="position: relative; z-index: 1;">
-                    <h3 class="audiowide-regular" style="color: #ffffff; font-size: 12px; margin: 0 0 6px 0; text-align: center; letter-spacing: 1px;">🔒 PRIVASI TERJAMIN MUTLAK</h3>
-                    <p style="text-align: center; color: var(--text-muted); font-size: 10px; margin-bottom: 0;">Aplikasi ini <strong>100% Offline</strong>. Data Anda dienkripsi dan disimpan secara eksklusif di perangkat Anda.</p>
+                    <h3 class="audiowide-regular" style="color: #ffffff; font-size: 11px; margin: 0 0 6px 0; text-align: center; letter-spacing: 1px;">🔒 PRIVASI TERJAMIN MUTLAK</h3>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 10px; font-family: 'Montserrat', sans-serif; line-height: 1.5; margin: 0;">Aplikasi ini <strong>100% Offline</strong>. Data Anda dienkripsi secara eksklusif di perangkat Anda.</p>
                 </div>
             </div>
 
-            <!-- Peringatan Ekspor Excel (Elegan & Intimidatif dengan ruang napas) -->
-            <div class="about-glass-card" style="border: 1px solid rgba(255, 59, 48, 0.5); background: rgba(255, 59, 48, 0.05); padding: 15px; margin-bottom: 20px; border-radius: 12px; box-shadow: inset 0 0 20px rgba(255, 59, 48, 0.05), 0 5px 15px rgba(0,0,0,0.5);">
+            <div class="about-glass-card" style="border: 1px solid rgba(255, 59, 48, 0.5); background: rgba(255, 59, 48, 0.05); padding: 15px; margin: 0; border-radius: 12px; box-shadow: inset 0 0 20px rgba(255, 59, 48, 0.05), 0 5px 15px rgba(0,0,0,0.5);">
                 <div style="position: relative; z-index: 1;">
-                    <h3 class="audiowide-regular" style="color: var(--danger); font-size: 12px; margin: 0 0 8px 0; text-align: center; letter-spacing: 1px; text-shadow: 0 0 5px rgba(255,59,48,0.4);">WARNING ⚠️</h3>
-                    <p style="text-align: center; color: #dcdcdc; font-size: 10px; margin-bottom: 0; line-height: 1.6;">
-                        Aplikasi tidak memiliki sinkronisasi <i>Cloud.</i> Jika <i>cache BROWSER</i> terhapus, <strong>riwayat Anda akan musnah.</strong><br>
+                    <h3 class="audiowide-regular" style="color: var(--danger); font-size: 11px; margin: 0 0 6px 0; text-align: center; letter-spacing: 1px; text-shadow: 0 0 5px rgba(255,59,48,0.4);">WARNING ⚠️</h3>
+                    <p style="text-align: center; color: #dcdcdc; font-size: 10px; font-family: 'Montserrat', sans-serif; line-height: 1.5; margin: 0;">
+                        Aplikasi ini tidak memiliki sinkronisasi <i>Cloud.</i> Jika <i>cache BROWSER</i> terhapus, <strong>riwayat akan musnah.</strong><br>
                         Lakukan <strong style="color: var(--excel); text-shadow: 0 0 5px var(--excel); font-size: 11px;">Save Excel</strong> secara berkala. ​<br>
-                        <span style="display: block; margin-top: 6px; font-style: italic; color: #aaaaaa;">"Jangan remehkan tombol save, atau dia akan meremehkan usahamu" <span style="color: var(--danger);">#quotes</span></span>
+                                               <span style="display: block; margin-top: 6px; font-style: italic; color: #aaaaaa; font-size: 9px; line-height: 1.6;">
+                            "Jangan remehkan tombol SAVE, <br>
+                            atau dia akan meremehkan usahamu" <br>
+                            <span style="color: var(--danger); font-weight: 700;">#quotes</span>
+                        </span>
                     </p>
                 </div>
             </div>
+        </div>            
 
-            <!-- DEVELOPED BY (Tanpa Kolom/Border, Bersih, Proporsional) -->
-            <div style="padding: 0 5px;">
-                <p style="text-align: center; color: var(--text-muted); font-weight: 700; letter-spacing: 2px; margin: 0 0 6px 0; font-size: 10px;">DEVELOPED BY</p>
-                <div style="text-align: center; margin-bottom: 12px;">
-                    <strong class="audiowide-regular" style="color: #ffffff; font-size: 14px; display: block; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Ginanjar Wahyu RHP</strong>
-                </div>
-                
-                <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px;">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="#6001D2"><path d="M22.775 5.564c-.035-.386-.164-.75-.373-1.057-.21-.307-.492-.547-.818-.696-.326-.15-.685-.205-1.043-.16-.358.046-.702.193-.997.426l-7.545 6.037L4.456 4.077c-.295-.233-.64-.38-.997-.426-.358-.045-.717.01-1.043.16-.326.15-.608.39-.818.696-.21.307-.338.67-.373 1.057-.034.386.027.778.178 1.135l6.574 10.638v6.234h8.046v-6.234l6.574-10.638c.15-.357.212-.749.178-1.135z"/></svg>
-                        <span style="font-weight: 500; font-size: 11px; letter-spacing: 0.5px;">n_dazmoe@yahoo.com</span>
-                    </div>
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.728L12 16.636l-6.545-4.908v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 8.401l8.073-4.908c1.618-1.214 3.927-.059 3.927 1.964z"/><path fill="#34A853" d="M20.182 21H24v-9.273z"/><path fill="#FBBC05" d="M0 11.727V21h3.818v-9.273z"/><path fill="#4285F4" d="M12 16.636l6.545-4.908V5.457L12 10.364z"/><path fill="#EA4335" d="M3.818 5.457L12 10.364 20.182 5.457v6.271z"/></svg>
-                        <span style="font-weight: 500; font-size: 11px; letter-spacing: 0.5px;">nd4zmoe@gmail.com</span>
-                    </div>
-                </div>
-
-                <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 15px;">
-                    <p style="text-align: center; color: var(--text-light); font-size: 10px; margin: 0 0 10px 0; font-style: italic;">Konsultasi aplikasi uang famBARLA</p>
-                        <button onclick="window.open('https://wa.me/6282226334999?text=Hai%2C%20Developer%20uang%20famBARLA.%0ASaya%20pengguna%20aplikasi%20uang%20famBARLA%2C%20Ada%20yang%20ingin%20saya%20konsultasikan%20seputar%20aplikasi%20ini.', '_blank')" style="width: 100%; background: #25D366; color: #fff; border: none; padding: 12px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="#ffffff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                            WHATSAPP
-                        </button>
-                    </div>
-                </div>
-                <p style="text-align: center; color: #555555; font-size: 9px; margin-top: 12px; margin-bottom: 0; font-weight: 700; letter-spacing: 1px;">Hak Cipta © 2026 - All Rights Reserved</p>
-            </div>
+        <!-- GRUP 3: Tombol Aksi Utama -->
+        <div>
+            <button onclick="bukaTutorial()" style="width: 100%; background: linear-gradient(135deg, var(--wa-blue), #007bb5); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 14px; border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 20px rgba(0, 191, 255, 0.3); transition: transform 0.2s; margin: 0;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                BUKA PANDUAN APLIKASI
+            </button>
         </div>
+
+        <!-- GRUP 4: Footer -->
+        <div style="padding: 0 5px;">
+            <p style="text-align: center; color: var(--text-muted); font-weight: 700; letter-spacing: 2px; margin: 0 0 6px 0; font-size: 10px;">DEVELOPED BY</p>
+            <div style="text-align: center; margin-bottom: 12px;">
+                <strong class="audiowide-regular" style="color: #ffffff; font-size: 14px; display: block; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Ginanjar Wahyu RHP</strong>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="#6001D2"><path d="M22.775 5.564c-.035-.386-.164-.75-.373-1.057-.21-.307-.492-.547-.818-.696-.326-.15-.685-.205-1.043-.16-.358.046-.702.193-.997.426l-7.545 6.037L4.456 4.077c-.295-.233-.64-.38-.997-.426-.358-.045-.717.01-1.043.16-.326.15-.608.39-.818.696-.21.307-.338.67-.373 1.057-.034.386.027.778.178 1.135l6.574 10.638v6.234h8.046v-6.234l6.574-10.638c.15-.357.212-.749.178-1.135z"/></svg>
+                    <span style="font-weight: 500; font-size: 11px; letter-spacing: 0.5px; color: #fff;">n_dazmoe@yahoo.com</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.728L12 16.636l-6.545-4.908v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 8.401l8.073-4.908c1.618-1.214 3.927-.059 3.927 1.964z"/><path fill="#34A853" d="M20.182 21H24v-9.273z"/><path fill="#FBBC05" d="M0 11.727V21h3.818v-9.273z"/><path fill="#4285F4" d="M12 16.636l6.545-4.908V5.457L12 10.364z"/><path fill="#EA4335" d="M3.818 5.457L12 10.364 20.182 5.457v6.271z"/></svg>
+                    <span style="font-weight: 500; font-size: 11px; letter-spacing: 0.5px; color: #fff;">nd4zmoe@gmail.com</span>
+                </div>
+            </div>
+
+            <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 15px;">
+                <button onclick="window.open('https://wa.me/6282226334999?text=Hai%2C%20Developer%20uang%20famBARLA.%0ASaya%20pengguna%20aplikasi%20uang%20famBARLA%2C%20Ada%20yang%20ingin%20saya%20konsultasikan%20seputar%20aplikasi%20ini.', '_blank')" style="width: 100%; background: #25D366; color: #fff; border: none; padding: 12px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#ffffff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Hubungi Developer
+                </button>
+            </div>
+            <p style="text-align: center; color: #555555; font-size: 9px; margin-top: 12px; margin-bottom: 0; font-weight: 700; letter-spacing: 1px;">Hak Cipta © 2026 - All Rights Reserved</p>
+        </div>
+
     </div>
 </div>
-
-
 <div id="import-modal" class="modal-overlay hidden" onclick="if(event.target===this) { document.getElementById('file-import').value = ''; tutupModalAman('import-modal'); }">
     <div class="modal-box">
         <h3 class="audiowide-regular" style="margin-top:0; color:#fff;">Metode Impor</h3>
@@ -797,7 +842,7 @@
     </div>
 </div>
 
-<div id="edit-modal" class="modal-overlay hidden" onclick="if(event.target===this) document.getElementById('edit-btn-cancel').click();">
+<div id="edit-modal" class="modal-overlay hidden">
     <div class="modal-box">
         <h3 id="edit-modal-title" class="audiowide-regular" style="margin-top:0; margin-bottom: 15px;">Edit Data</h3>
         <div class="form-group" style="text-align:left;"><label for="edit-date">Tanggal</label><input type="text" id="edit-date" readonly onclick="openPicker('edit-date','date','#ffffff'); event.stopPropagation();"></div>
@@ -825,7 +870,7 @@
     </div>
 </div>
 
-<div id="custom-picker" class="modal-overlay hidden" style="z-index: 30000;" onclick="if(event.target===this) closePicker()">
+<div id="custom-picker" class="modal-overlay hidden" style="z-index: 30000;">
     <div class="picker-box">
         <div class="picker-header"><button class="picker-nav" onclick="cpChange(-1)">&#10094;</button><div id="cp-title" class="picker-title">2026</div><button class="picker-nav" onclick="cpChange(1)">&#10095;</button></div>
         <div id="cp-day-view"><div class="picker-days-header"><span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span></div><div id="cp-grid-days" class="picker-grid"></div></div>
@@ -838,7 +883,7 @@
     </div>
 </div>
 
-<div id="extra-modal" class="modal-overlay hidden" style="z-index: 20000;" onclick="if(event.target===this) tutupModalExtra()">
+<div id="extra-modal" class="modal-overlay hidden" style="z-index: 20000;">
     <div class="modal-box" id="extra-modal-box" style="padding: 20px; width: 90%; max-width: 350px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 10px;">
             <h3 id="extra-modal-title" class="audiowide-regular" style="margin:0; font-size:15px;">Daftar Ekstra</h3>
@@ -854,7 +899,7 @@
     </div>
 </div>
 
-<div id="extra-form-modal" class="modal-overlay hidden" style="z-index: 20001;" onclick="if(event.target===this) tutupModalAman('extra-form-modal')">
+<div id="extra-form-modal" class="modal-overlay hidden" style="z-index: 20001;">
     <div class="modal-box" id="extra-form-box" style="padding: 20px;">
         <h3 id="extra-form-title" class="audiowide-regular" style="margin-top:0; margin-bottom: 15px; font-size:15px;">Catat</h3>
         
@@ -916,7 +961,7 @@
     </div>
 </div>
 
-<div id="extra-cicil-modal" class="modal-overlay hidden" style="z-index: 20001;" onclick="if(event.target===this) tutupModalAman('extra-cicil-modal')">
+<div id="extra-cicil-modal" class="modal-overlay hidden" style="z-index: 20001;">
     <div class="modal-box" id="extra-cicil-box" style="padding: 20px;">
         <h3 id="extra-cicil-title" class="audiowide-regular" style="margin-top:0; margin-bottom: 10px; font-size:15px;">Cicilan</h3>
         <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;"><span id="extra-cicil-desc"></span> <strong id="extra-cicil-nama" style="color:#fff;"></strong></p>
@@ -982,6 +1027,122 @@
             </button>
         </div>
         <ul id="list-plot-detail" class="titipan-list"></ul>
+    </div>
+</div>
+
+<div id="tutorial-modal" class="modal-overlay hidden" style="z-index: 25000;">
+    <div class="modal-box" style="width: 95%; max-width: 450px; max-height: 85vh; padding: 0; display: flex; flex-direction: column; background: #111111; border-color: var(--wa-blue); overflow: hidden;">
+        
+        <!-- Header Modal -->
+        <div style="padding: 15px 20px; background: rgba(0,0,0,0.8); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--wa-blue)" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                <h3 class="audiowide-regular" style="margin:0; color:var(--text-light); font-size:15px;">PANDUAN PENGGUNAAN</h3>
+            </div>
+            <button class="icon-btn" onclick="tutupTutorial()" style="padding:4px;">
+                <svg class="svg-x" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6M9 9l6 6"></path></svg>
+            </button>
+        </div>
+
+                <!-- Isi Konten Panduan -->
+        <div style="padding: 20px; overflow-y: auto; flex: 1; text-align: left;" id="tutorial-scroll-area">
+            
+            <div class="tutorial-card" style="border-left-color: var(--cloud);">
+                <h4 class="audiowide-regular" style="color: var(--cloud);">1. NAVIGASI, HEADER, & IMPOR DATA</h4>
+                <p>Fitur di bagian atas layar menyimpan kendali utama aplikasi Anda.</p>
+                <ul>
+                    <li><strong>Logo Aplikasi (uang famBARLA):</strong> Jika Anda salah mengisi formulir, klik/sentuh logo ini untuk <strong>Reset Formulir</strong> instan (mengosongkan semua kolom & mengembalikan tanggal ke hari ini).</li>
+                    <li><strong>Indikator (Memori):</strong> Menunjukkan sisa ruang brankas lokal. Jika berkedip merah (&gt;85%), lakukan pencadangan!</li>
+                    <li><strong>Tombol Cloud 🔒:</strong> Dikunci (Aman 100% Offline).</li>
+                    <li><strong>Menu Kebab (3 Titik):</strong> Tempat untuk <strong>Save Excel</strong> (Ekspor Backup) dan <strong>Hapus Semua Data</strong> (Reset Total/Wipe-Out).</li>
+                </ul>
+                <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                    <strong style="color: var(--excel); font-size: 11px;">📥 MEMAHAMI FITUR LOAD EXCEL:</strong>
+                    <ul style="margin-top: 6px;">
+                        <li><span class="tutorial-highlight" style="color: var(--danger)">Impor Ringkas:</span> Hanya mengambil Total Akhir dari Excel dan mengubahnya menjadi "Saldo Awal". Riwayat transaksi lama dihapus agar HP ringan. <strong>Catatan:</strong> Data Menu Ekstra (Hutang/Shopee) yang belum lunas tidak akan terhapus (Sangat Aman).</li>
+                        <li><span class="tutorial-highlight" style="color: var(--wa-green)">Impor Semua:</span> Mengembalikan seluruh riwayat baris demi baris sama persis seperti file Excel. Saldo, Plot, dan Ekstra akan tertimpa sepenuhnya oleh data Excel.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tutorial-card" style="border-left-color: var(--wa-gold);">
+                <h4 class="audiowide-regular" style="color: var(--wa-gold);">2. REKAP & MANAJEMEN DOMPET</h4>
+                <ul>
+                    <li><strong>Sisa Saldo Global:</strong> Total akumulasi dari ke-5 dompet Anda (Bank, Tunai, e-Wallet, Dana Darurat, Dana Darurat 🔒).</li>
+                    <li><strong>Tombol Mutasi (⇄):</strong> Gunakan ini jika Anda memindah uang fisik. <em>Contoh:</em> Anda tarik tunai di ATM. Maka catat Mutasi: Dari [Bank] Ke [Tunai]. Uang tidak akan berkurang/bertambah, hanya pindah tempat.</li>
+                    <li><strong>Dana Darurat 🔒:</strong> Ini adalah brankas keamanan tingkat tinggi. Setiap kali Anda mencatat uang keluar, memindahkan, atau mengedit data yang bersumber dari dompet ini, sistem akan menagih <strong>PIN Keamanan</strong>. (PIN: <strong>123</strong>).</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-card" style="border-left-color: var(--wa-green);">
+                <h4 class="audiowide-regular" style="color: var(--wa-green);">3. ARUS KAS (CATAT, EDIT, HAPUS)</h4>
+                <ul>
+                    <li><strong style="color: var(--wa-green);">Tab DEBIT:</strong> Untuk mencatat uang masuk.</li>
+                    <li><strong style="color: var(--danger);">Tab KREDIT:</strong> Untuk mencatat uang keluar. Jika pengeluaran ini sudah dianggarkan, pilih nama Plot pada kolom <em>Ambil dari Plot</em>.</li>
+                </ul>
+                <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                    <strong style="color: #fff; font-size: 11px;">📝 CARA EDIT & HAPUS TRANSAKSI:</strong>
+                    <ul style="margin-top: 6px;">
+                        <li><strong>Edit:</strong> Cari riwayat transaksi di bawah (menu REKAP). <strong style="color:var(--wa-blue)">Sentuh pada bagian Teks Keterangan</strong>. Jendela Edit akan muncul. Jika Anda mengedit nominal dan saldo tidak cukup, sistem otomatis membatalkan edit untuk mencegah saldo minus.</li>
+                        <li><strong>Hapus:</strong> <strong style="color:var(--danger)">Sentuh ikon (✖) merah</strong> di ujung kanan transaksi.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tutorial-card" style="border-left-color: var(--wa-blue);">
+                <h4 class="audiowide-regular" style="color: var(--wa-blue);">4. MANAJEMEN PLOT (ANGGARAN)</h4>
+                <p>Buat "Amplop Digital" di tab PLOT untuk melacak batasan pengeluaran harian/bulanan.</p>
+                <ul>
+                    <li><strong>Cara Pakai:</strong> Buat plot (Misal: Belanja Dapur Rp 500rb). Saat catat pengeluaran di KREDIT, pilih plot "Belanja Dapur".</li>
+                    <li><strong>Membaca Warna:</strong> 🟢 <strong style="color: var(--wa-green)">Sisa</strong> (Anda masih punya sisa anggaran) | 🔴 <strong style="color: var(--danger);">Lebih</strong> (Anda Over Budget / Melebihi target).</li>
+                    <li><strong>Rincian Plot:</strong> Sentuh <strong>Ikon Jam</strong> di samping nama Plot untuk melihat daftar pengeluaran apa saja yang memakan anggaran tersebut.</li>
+                    <li><strong>Edit Plot:</strong> Sentuh <strong>Nama Plot</strong> untuk mengubah namanya. Sentuh <strong>Target (Rp)</strong> untuk mengubah batas anggarannya.</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-card" style="border-left-color: var(--shopee);">
+                <h4 class="audiowide-regular" style="color: var(--shopee);">5. MENU EKSTRA (SISTEM BERANTAI)</h4>
+                <p>Akses via <strong>Ikon 4 Titik Warna</strong> di kiri atas Saldo. Fitur ini menggunakan otomatisasi saldo!</p>
+                <ul>
+                    <li><strong>Hutang / Piutang / Titipan:</strong> Saat Anda mencatat berhutang, uang dompet otomatis bertambah. Saat Anda menekan tombol <strong style="color:var(--wa-pink)">BAYAR</strong> cicilan di menu ini, uang dompet otomatis terpotong dan tercatat di riwayat utama.</li>
+                    <li><strong>Fitur sPinjam:</strong> Pembedaan krusial: <em>Uang Cair</em> adalah uang yang masuk ke dompet Anda, sedangkan <em>Total Pinjaman</em> adalah uang + bunga yang harus Anda bayar.</li>
+                    <li><strong>Tenor & Jatuh Tempo:</strong> Isi durasi bulan (Tenor) agar aplikasi bisa menghitung cicilan bulanan Anda secara matematis. Aplikasi akan memunculkan peringatan Pop-up jika ada tagihan yang lewat jatuh tempo!</li>
+                    <li><strong>Kirim WhatsApp:</strong> Jika Anda memasukkan Nomor WA (Misal: 0812...), akan muncul <strong>Ikon WA Hijau</strong>. Sentuh ikon itu, dan aplikasi otomatis mengetik rincian nota tagihan/cicilan yang siap dikirim via WhatsApp.</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-card" style="border-left-color: var(--text-light);">
+                <h4 class="audiowide-regular" style="color: var(--text-light);">6. GRAFIK & PENCARIAN CERDAS</h4>
+                <ul>
+                    <li><strong>Grafik Visual:</strong> Klik ikon bundar (Pie Chart) di kanan atas Saldo untuk melihat analisis grafik Portofolio.</li>
+                    <li><strong>Rentang Waktu:</strong> Gunakan dua kolom kalender di atas daftar riwayat untuk memfilter transaksi dari tanggal A ke tanggal B.</li>
+                </ul>
+                <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                    <strong style="color: #fff; font-size: 11px;">🔎 RUMUS KOTAK PENCARIAN (SEARCH):</strong>
+                    <p style="margin-top: 6px;">Ketik perintah ini di kotak pencarian:</p>
+                    <ul>
+                        <li><span class="tutorial-highlight">Makan, Bensin dll</span> : Mencari teks spesifik.</li>
+                        <li><span class="tutorial-highlight">Hari Ini</span> atau <span class="tutorial-highlight">Kemarin</span> : Mencari transaksi di waktu tersebut.</li>
+                        <li><span class="tutorial-highlight">Januari dll</span> : Mencari transaksi bulan tertentu.</li>
+                        <li><span class="tutorial-highlight">&gt;50000</span> : Rumus untuk mencari transaksi yang nominalnya <em>Lebih Dari</em> 50 ribu.</li>
+                        <li><span class="tutorial-highlight">Mutasi</span> : Memunculkan riwayat transfer antar dompet.</li>
+                        <li>Sentuh <strong>Ikon X Merah</strong> di ujung kanan kotak pencarian untuk menghapus filter.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tutorial-card" style="border-left-color: var(--danger); background: rgba(255, 59, 48, 0.05);">
+                <h4 class="audiowide-regular" style="color: var(--danger);">7. BACKUP DATA (SOP WAJIB!)</h4>
+                <p>Aplikasi ini <strong>100% Offline</strong>. Data brankas disimpan di dalam memori Browser perangkat Anda.</p>
+                <ul>
+                    <li><strong>ZONA BAHAYA:</strong> Melakukan <em>Clear Data / Clear Cache</em> pada aplikasi Browser (Chrome/Safari) Anda akan <strong>memusnahkan seluruh riwayat dan saldo secara permanen.</strong></li>
+                    <li><strong>SOP PENYELAMATAN:</strong> Wajib rutinkan menekan tombol <strong style="color: var(--excel);">Save Excel</strong> setiap akhir minggu. Simpan file Excel tersebut di tempat aman (Google Drive/Flashdisk).</li>
+                    <li><strong>Cara Pemulihan:</strong> Jika HP rusak, hilang, atau aplikasi ter-reset, Anda cukup menginstal ulang aplikasi, pilih <strong>Load Excel (Impor Semua)</strong>, dan seluruh DATA keuangan Anda akan kembali 100% utuh tanpa cacat.</li>
+                </ul>
+            </div>
+
+        </div>
+        </div>
     </div>
 </div>
 
@@ -1052,13 +1213,15 @@
             const combined = new Uint8Array(iv.length + cipher.byteLength);
             combined.set(iv, 0); combined.set(new Uint8Array(cipher), iv.length);
             
-                        // [PERBAIKAN SENIOR ENG]: Transformasi murni via Array-Join Buffer.
-            // Menjamin 0% risiko Call-Stack Overflow pada WebView HP lawas & menghemat Heap V8.
-            const strArr = new Array(combined.length);
-            for (let i = 0; i < combined.length; i++) {
-                strArr[i] = String.fromCharCode(combined[i]);
+                                    // [PERBAIKAN CYBERSECURITY & LEAD QA]: Chunking Buffer to Binary String.
+            // Mencegah V8 Heap Explosion. Array of String pada JS memakan memori eksponensial (Pointer Overhead).
+            // Metode Chunking menghindari Call-Stack Overflow sekaligus menjaga RAM tetap sangat rendah dan stabil.
+            let binary = '';
+            const chunkSize = 8192;
+            for (let i = 0; i < combined.length; i += chunkSize) {
+                binary += String.fromCharCode.apply(null, combined.subarray(i, i + chunkSize));
             }
-            return btoa(strArr.join(''));
+            return btoa(binary);
         },
                 async decryptDB(encryptedB64, pin) {
             if (!window.crypto || !window.crypto.subtle) {
@@ -1207,8 +1370,9 @@
             return `${year}-${month}-${day}`;
         },
         formatTglTampil: (ymd) => { if(!ymd) return "-"; const p = ymd.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; },
-        toTitleCase: (str) => {
-            return str.replace(/\w\S*/g, (txt) => {
+                toTitleCase: (str) => {
+            if (str == null) return "";
+            return String(str).replace(/\w\S*/g, (txt) => {
                 if (txt === txt.toUpperCase() && txt.match(/[A-Z]/)) return txt;
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             });
@@ -1331,10 +1495,16 @@
                 const decryptedStr = await CoreEngine.decryptDB(dataTersimpan, PIN_DARURAT);
                 const parsed = JSON.parse(decryptedStr);
                 
-                // [INJEKSI LEAD QA]: Universal String Sanitizer.
-                // Memaksa seluruh ID menjadi String saat mendarat di RAM. Menyembuhkan 'Silent CRUD Failure' 
-                // akibat injeksi ID angka mentah dari file Excel lawas.
-                const forceStringId = (arr) => arr && arr.forEach(x => { if (x && x.id != null) x.id = String(x.id); });
+                                // [INJEKSI LEAD QA]: Universal Type Sanitizer (ID String & Number Cast).
+                // Mencegah eksploitasi 'Type Coercion' (Penggabungan String) jika pengguna memuat data
+                // Excel lawas. Memastikan kalkulator matematika V8 Engine tidak meledak (Memory Crash).
+                const sanitizeSchema = (arr) => arr && arr.forEach(x => { 
+                    if (x && x.id != null) x.id = String(x.id); 
+                    if (x && x.amount != null) x.amount = Number(x.amount) || 0;
+                    if (x && x.paidAmount != null) x.paidAmount = Number(x.paidAmount) || 0;
+                    if (x && x.target != null) x.target = Number(x.target) || 0;
+                    if (x && x.principal != null) x.principal = Number(x.principal) || 0;
+                });
 
                 AppState.db.income = parsed.income || [];
                 AppState.db.expense = parsed.expense || [];
@@ -1346,7 +1516,7 @@
                 AppState.db.hutang = parsed.hutang || []; AppState.db.piutang = parsed.piutang || []; 
                 AppState.db.spaylater = parsed.spaylater || []; AppState.db.spinjam = parsed.spinjam || []; 
 
-                Object.values(AppState.db).forEach(col => Array.isArray(col) && forceStringId(col));
+                Object.values(AppState.db).forEach(col => Array.isArray(col) && sanitizeSchema(col));
             }
             isDatabaseKorup = false;
             kalkulasiUlangSemuaSaldo(); 
@@ -1520,7 +1690,7 @@
 
         const teks = document.getElementById('modal-text'), input = document.getElementById('modal-input'), btnBatal = document.getElementById('modal-btn-cancel'), btnOk = document.getElementById('modal-btn-ok'), judul = document.getElementById('modal-title'), loader = document.getElementById('modal-loader'), modalBox = overlay.querySelector('.modal-box');
         
-        input.type = 'text'; document.body.classList.add('modal-open'); teks.innerText = pesan; overlay.classList.remove('hidden');
+        input.type = 'text'; document.body.classList.add('modal-open'); teks.innerHTML = pesan; overlay.classList.remove('hidden');
         btnOk.className = "modal-btn ok"; btnBatal.className = "modal-btn cancel"; btnOk.disabled = false;
         btnOk.style.cssText = `background-color: #222222 !important; color: ${warnaTema} !important; border: 1px solid ${warnaTema} !important; opacity: 0.4;`;
         btnBatal.style.cssText = `background-color: #222222 !important; color: ${warnaTema} !important; border: 1px solid ${warnaTema} !important;`;
@@ -1581,22 +1751,22 @@
     function openAboutModal() { tutupSemuaMenuDrop(); document.getElementById('about-modal').classList.remove('hidden'); document.body.classList.add('modal-open'); }
     function closeAboutModal() { tutupModalAman('about-modal'); }
 
-       function backupToCloud() {
+           function backupToCloud() {
         tutupSemuaMenuDrop();
         // [INJEKSI QA]: Memblokir fitur upload API untuk versi publik
-        showPopup('alert', "Akses Terbatas. Fitur Penyimpanan Cloud saat ini dikunci untuk versi publik. Hubungi Developer (Ginanjar WR HP) untuk informasi aktivasi.", 'var(--cloud)');
+        showPopup('alert', "Akses Terbatas. Fitur Penyimpanan Cloud dikunci untuk versi publik. Hubungi Developer (Ginanjar WR HP) untuk informasi aktivasi.\n\n<span style='color: var(--wa-gold);'>Lihat menu About untuk mengakses PANDUAN APLIKASI.</span>", 'var(--cloud)');
     }
 
     function loadFromCloud() {
         tutupSemuaMenuDrop();
         // [INJEKSI QA]: Memblokir fitur load API untuk versi publik
-        showPopup('alert', "Akses Terbatas. Fitur Penyimpanan Cloud saat ini dikunci untuk versi publik. Hubungi Developer (Ginanjar WR HP) untuk informasi aktivasi.", 'var(--cloud)');
+        showPopup('alert', "Akses Terbatas. Fitur Penyimpanan Cloud dikunci untuk versi publik. Hubungi Developer (Ginanjar WR HP) untuk informasi aktivasi.\n\n<span style='color: var(--wa-gold);'>Lihat menu About untuk mengakses PANDUAN APLIKASI.</span>", 'var(--cloud)');
     }
 
     function promptExecuteLoadCloud() {
         // Fallback keamanan jika fungsi dipanggil paksa melalui Console Browser
         closeCloudLoadModal();
-        showPopup('alert', "Akses Terbatas. Fitur Penyimpanan Cloud saat ini dikunci untuk versi publik. Hubungi Developer (Ginanjar Wahyu RHP) untuk informasi aktivasi dan dukungan teknis.", 'var(--cloud)');
+        showPopup('alert', "Akses Terbatas. Fitur Penyimpanan Cloud dikunci untuk versi publik. Hubungi Developer (Ginanjar WR HP) untuk informasi aktivasi.\n\n<span style='color: var(--wa-gold);'>Lihat menu About untuk mengakses PANDUAN APLIKASI.</span>", 'var(--cloud)');
     }
 
     function executeLoadCloud(selectedMonth) {
@@ -2028,7 +2198,7 @@
         showPopup('delete', "Hapus plot ini?\nRiwayat lama akan menjadi 'Tanpa Plot'.", 'var(--danger)', () => {
             AppState.db.plots = AppState.db.plots.filter(p => p.id !== idPlot);
             AppState.db.expense.forEach(e => { if (e.plotId === idPlot) e.plotId = ''; });
-            ['out-plot', 'edit-plot-val'].forEach(id => { const el = document.getElementById(id); if (el && el.value === idPlot) setCustomVal(id, `${id}-trigger`, `${id}-opts`, ''); });
+            ['out-plot', 'edit-plot-val', 'cicil-plot'].forEach(id => { const el = document.getElementById(id); if (el && el.value === idPlot) setCustomVal(id, `${id}-trigger`, `${id}-opts`, ''); });
             simpanDatabase(); updatePlotList(); updateRekap(); buildPlotOptions('out-plot-opts', 'out-plot-trigger', 'out-plot'); buildPlotOptions('edit-plot-opts', 'edit-plot-trigger', 'edit-plot-val'); showToast("Plot dihapus!", 'var(--danger)');
         });
     }
@@ -2726,10 +2896,13 @@
 
         AppState.db[ModeEkstraAktif].forEach(t => {
             t.paidAmount = t.paidAmount || 0; if (!t.paymentIds) t.paymentIds = [];
-            if (t.status === 'selesai') { 
-                const d = new Date(), bulanIniLokal = `/${d.getMonth() + 1}/${d.getFullYear()}`, bulanIniISO = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; 
+                        if (t.status === 'selesai') { 
+                const d = new Date();
+                const strBulanBiasa = `/${d.getMonth() + 1}/${d.getFullYear()}`;
+                const strBulanPad = `/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                const strBulanISO = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
                 const tglLunas = t.dateOut || "";
-                if (tglLunas.includes(bulanIniLokal) || tglLunas.includes(bulanIniISO)) selesaiItems.push(t); 
+                if (tglLunas.includes(strBulanBiasa) || tglLunas.includes(strBulanPad) || tglLunas.includes(strBulanISO)) selesaiItems.push(t); 
             } else {
                 let baseName = String(t.nama).trim();
                 const extracted = Utils.extractNameAndNote(baseName);
@@ -2884,8 +3057,9 @@
         if (dbMskAsli !== 'none' && idEdit) { const dataExt = AppState.db[ModeEkstraAktif].find(x => x.id === idEdit), trxData = dataExt && dataExt[cfg.idTrx] ? AppState.db[dbMskAsli].find(x => x.id === dataExt[cfg.idTrx]) : null; if (trxData) dompetAktual = trxData.wallet; }
         const butuhPin = (dbMskAsli !== 'none' && dompetAktual === 'Dana Darurat 🔒');
 
-        const execSimpanExtra = () => {
+               const execSimpanExtra = () => {
             try {
+                const tglLunasAman = `Lunas pada: ${Utils.formatTglTampil(Utils.tglHariIni())}`;
                 if (dbMskAsli === 'none') { 
                     if (idEdit) {
                         const dataExt = AppState.db[ModeEkstraAktif].find(x => x.id === idEdit);
@@ -2893,7 +3067,7 @@
                             if (amount < (dataExt.paidAmount || 0)) { showPopup('alert', `Batal: Tagihan baru tidak boleh lebih kecil dari yang sudah dibayar (${Utils.formatRp(dataExt.paidAmount)})!`, 'var(--danger)'); return; }
                             dataExt.nama = namaDb; dataExt.catatan = catatanDb; dataExt.noWA = noWA; dataExt.amount = amount; dataExt.dateIn = dateIn; dataExt.tenor = tenorVal; if(dueDate !== undefined) dataExt.dueDate = dueDate;
                             
-                            if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = `Lunas pada: ${new Date().toLocaleDateString('id-ID')}`; } 
+                            if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = tglLunasAman; } 
                             else { dataExt.status = 'aktif'; dataExt.dateOut = null; }
                         }
                     } else {
@@ -2919,7 +3093,7 @@
 
                                  dataExt.nama = namaDb; dataExt.catatan = catatanDb; dataExt.noWA = noWA; dataExt.amount = amount; dataExt.dateIn = dateIn; dataExt.tenor = tenorVal; if(dueDate !== undefined) dataExt.dueDate = dueDate;
                                  
-                                 if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = `Lunas pada: ${new Date().toLocaleDateString('id-ID')}`; } 
+                                 if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = tglLunasAman; } 
                                  else { dataExt.status = 'aktif'; dataExt.dateOut = null; }
                             } else if (trxData && ModeEkstraAktif === 'spinjam') {
                                  if (amount < (dataExt.paidAmount || 0)) { showPopup('alert', `Batal: Tagihan baru tidak boleh lebih kecil dari yang sudah dibayar!`, 'var(--danger)'); return; }
@@ -2930,12 +3104,12 @@
                                  ubahSaldoDelta(dompetLama, principal, true); 
 
                                  dataExt.nama = namaDb; dataExt.catatan = catatanDb; dataExt.noWA = noWA; dataExt.amount = amount; dataExt.principal = principal; dataExt.dateIn = dateIn; dataExt.tenor = tenorVal; if(dueDate !== undefined) dataExt.dueDate = dueDate;
-                                 if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = `Lunas pada: ${new Date().toLocaleDateString('id-ID')}`; } else { dataExt.status = 'aktif'; dataExt.dateOut = null; }
+                                 if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = tglLunasAman; } else { dataExt.status = 'aktif'; dataExt.dateOut = null; }
                                  trxData.desc = fullDesc; trxData.amount = principal; trxData.date = dateIn;
                             } else {
                                  if (amount < (dataExt.paidAmount || 0)) { showPopup('alert', `Batal: Tagihan baru tidak boleh lebih kecil dari yang sudah dibayar!`, 'var(--danger)'); return; }
                                  dataExt.nama = namaDb; dataExt.catatan = catatanDb; dataExt.noWA = noWA; dataExt.amount = amount; if (ModeEkstraAktif === 'spinjam') dataExt.principal = principal; dataExt.dateIn = dateIn; dataExt.tenor = tenorVal; if(dueDate !== undefined) dataExt.dueDate = dueDate;
-                                 if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = `Lunas pada: ${new Date().toLocaleDateString('id-ID')}`; } else { dataExt.status = 'aktif'; dataExt.dateOut = null; }
+                                 if (dataExt.amount - dataExt.paidAmount <= 100) { dataExt.status = 'selesai'; if(!dataExt.dateOut) dataExt.dateOut = tglLunasAman; } else { dataExt.status = 'aktif'; dataExt.dateOut = null; }
                             }
                         }
                     } else {
@@ -3004,9 +3178,8 @@
         if (bayar > sisaSaatIni) { showPopup('alert', `Batal: Maksimal pembayaran adalah sisa tagihan (${Utils.formatRp(sisaSaatIni)})!`, 'var(--danger)'); return resetGlobalSubmit(); }
         if (cfg.klr === 'expense' && getSaldoDompet(dompet) < bayar) { showPopup('alert', `Batal: Saldo ${dompet} tidak cukup untuk mencicil/membayar!`, 'var(--danger)'); return resetGlobalSubmit(); }
 
-        const execProsesCicil = () => {
+                const execProsesCicil = () => {
             try {
-                const w = new Date(), tglStr = `${w.getDate()}/${w.getMonth()+1}/${w.getFullYear()}`;
                 dataExt.paidAmount = Math.round((dataExt.paidAmount || 0) + bayar);
                 const idBayar = Utils.buatId(); if(!dataExt.paymentIds) dataExt.paymentIds = []; dataExt.paymentIds.push(idBayar);
 
@@ -3020,7 +3193,7 @@
                 const sisaSetelahBayar = Math.round(dataExt.amount - dataExt.paidAmount);
 
                 if (sisaSetelahBayar <= 100) { 
-                    dataExt.status = 'selesai'; dataExt.dateOut = `Lunas pada: ${tglStr}`; 
+                    dataExt.status = 'selesai'; dataExt.dateOut = `Lunas pada: ${Utils.formatTglTampil(Utils.tglHariIni())}`; 
                     showToast(`Lunas Sempurna!`, cfg.warna); 
                 } else { showToast(`Pembayaran Berhasil! Sisa: ${Utils.formatRp(sisaSetelahBayar)}`, cfg.warna); }
                 
@@ -3214,6 +3387,27 @@
             if (!document.getElementById('rekap').classList.contains('hidden')) { updateRekap(false); }
         }
     });
+
+    // =========================================================
+    // [INJEKSI QA]: KONTROL PANDUAN TUTORIAL
+    // =========================================================
+    function bukaTutorial() {
+        tutupModalAman('about-modal');
+        // Delay 60ms agar eksekusi tutup modal About selesai melepas lock body
+        setTimeout(() => {
+            const tutModal = document.getElementById('tutorial-modal');
+            const scrollArea = document.getElementById('tutorial-scroll-area');
+            if (scrollArea) scrollArea.scrollTop = 0; // Reset scroll ke atas
+            tutModal.classList.remove('hidden');
+            document.body.classList.add('modal-open');
+        }, 60);
+    }
+
+        function tutupTutorial() {
+        tutupModalAman('tutorial-modal');
+        // Kembalikan ke menu About seketika tanpa jeda
+        openAboutModal();
+    }
 
                             window.addEventListener('DOMContentLoaded', async () => { 
         // [STEALTH BOOT]: Pop-up loading dihapus total untuk transisi aplikasi yang mulus
